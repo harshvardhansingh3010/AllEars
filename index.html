@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AllEars AI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<style>
+:root{
+    --muted:#9ca3af;
+    --border:rgba(255,255,255,0.12);
+    --cyan:#00ffff;
+    --cyan-dim:rgba(0,255,255,0.15);
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body{
+    display:flex;
+    background:radial-gradient(circle at center, #1a1a1a, #0a0a0a 70%);
+    color:white;
+    font-family:'Inter', sans-serif;
+    overflow-x:hidden;
+}
+
+/* SIDEBAR */
+.sidebar{
+    width:260px;
+    height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(25px);
+    padding:50px 30px;
+}
+
+.sidebar-logo{
+    font-weight:600;
+    font-size:18px;
+    margin-bottom:60px;
+    letter-spacing:2px;
+}
+
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    gap:30px;
+}
+
+.menu-item{
+    color:#8b8b8b;
+    cursor:pointer;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.menu-item:hover{
+    color:white;
+    transform:translateX(6px) scale(1.03);
+}
+
+.menu-item.active{
+    color:white;
+}
+
+/* MAIN */
+.main-content{
+    margin-left:260px;
+    width:100%;
+}
+
+/* NAV */
+.nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:30px 100px;
+    border-bottom:1px solid var(--border);
+}
+
+.logo{letter-spacing:2px;font-size:16px;}
+.nav-right div{cursor:pointer;color:var(--muted);}
+.nav-right div:hover{color:white;}
+
+/* HERO */
+.hero{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    position:relative;
+    z-index:1;
+    background:radial-gradient(circle at center, #1a1a1a, #0a0a0a 70%);
+}
+
+.hero h1{
+    letter-spacing:3px;
+    font-family:'Playfair Display', serif;
+    font-size:92px;
+    line-height:1.1;
+    letter-spacing:2px;
+}
+
+.hero-word{
+    display:inline-block;
+    opacity:0;
+    transform:translateY(40px);
+}
+
+.hero p{
+    margin-top:30px;
+    font-size:20px;
+    color:var(--muted);
+    opacity:0;
+}
+
+.btn-outline{
+    margin-top:50px;
+    padding:14px 42px;
+    background:transparent;
+    border:1px solid white;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+    opacity:0;
+}
+
+.btn-outline:hover{
+    background:white;
+    color:black;
+    box-shadow:0 10px 40px rgba(255,255,255,0.2);
+}
+
+.btn-outline:active{
+    transform:scale(0.95);
+}
+
+/* PANEL */
+.panel{
+    position:relative;
+    overflow:hidden;
+    max-width:1000px;
+    margin:140px auto;
+    padding:80px;
+    border-radius:28px;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.08), transparent 40%),
+        linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+    backdrop-filter:blur(30px);
+    box-shadow:
+        0 40px 120px rgba(0,0,0,0.8),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* CONTROLS */
+.controls{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:40px;
+    margin-bottom:40px;
+}
+
+select,
+input[type="file"]{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    letter-spacing:0.5px;
+    font-weight:400;
+    background:rgba(0,0,0,0.85);
+    color:white;
+    border:1px solid rgba(255,255,255,0.15);
+    padding:14px 22px;
+    border-radius:14px;
+    outline:none;
+    transition:0.3s ease;
+}
+select{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+    background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='white' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:right 15px center;
+    background-size:12px;
+}
+input[type="file"]::file-selector-button{
+    font-family:'Inter', sans-serif;
+    font-size:14px;
+    font-weight:500;
+    background:rgba(255,255,255,0.1);
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:8px;
+    margin-right:12px;
+    cursor:pointer;
+    transition:0.3s ease;
+}
+input[type="file"]::file-selector-button:hover{
+    background:white;
+    color:black;
+}
+
+/* SHIELD RECORDER */
+.recorder-wrapper{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+}
+
+.shield-recorder{
+    position:relative;
+    width:120px;
+    height:140px;
+    clip-path:polygon(50% 0%, 90% 20%, 90% 65%, 50% 100%, 10% 65%, 10% 20%);
+    background:linear-gradient(145deg,#0f1f2f,#0a141f);
+    border:2px solid rgba(0,255,255,0.4);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:0.4s ease;
+    box-shadow:0 0 25px rgba(0,255,255,0.15);
+}
+
+.shield-glow{
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle,rgba(0,255,255,0.25),transparent 70%);
+    opacity:0;
+    transition:0.4s;
+}
+
+.mic-core{
+    font-size:32px;
+    z-index:2;
+}
+
+.sound-waves{
+    position:absolute;
+    display:flex;
+    gap:6px;
+    z-index:1;
+}
+
+.sound-waves span{
+    width:4px;
+    height:12px;
+    background:#00ffff;
+    border-radius:3px;
+    opacity:0;
+}
+
+.shield-recorder.recording{
+    box-shadow:0 0 40px #00ffff,0 0 80px rgba(0,255,255,0.4);
+    border-color:#00ffff;
+}
+
+.shield-recorder.recording .shield-glow{
+    opacity:1;
+}
+
+.shield-recorder.recording .sound-waves span{
+    opacity:1;
+    animation:wave 1s infinite ease-in-out;
+}
+
+.shield-recorder.recording .sound-waves span:nth-child(2){animation-delay:0.2s;}
+.shield-recorder.recording .sound-waves span:nth-child(3){animation-delay:0.4s;}
+
+@keyframes wave{
+    0%,100%{height:12px;}
+    50%{height:30px;}
+}
+
+.rec-timer{
+    font-size:14px;
+    letter-spacing:2px;
+    color:#ff3b3b;
+    opacity:0;
+    transition:0.3s ease;
+}
+
+.rec-btn.recording + .rec-timer{
+    opacity:1;
+}
+
+/* PREVIEW PANEL */
+.preview-panel{
+    margin-top:20px;
+    padding:25px;
+    border-radius:18px;
+    background:rgba(255,255,255,0.05);
+    display:none;
+    text-align:center;
+}
+
+audio{width:100%;margin-bottom:30px;}
+
+/* ANALYZE BUTTON */
+#analyzeBtn{
+    padding:14px 42px;
+    background:transparent;
+    border:1px solid white;
+    color:white;
+    cursor:pointer;
+    transition:0.3s ease;
+    display:none;
+}
+
+#analyzeBtn:hover{background:white;color:black;}
+#analyzeBtn:active{transform:scale(0.95);}
+
+/* RESULTS */
+.results{
+    margin-top:60px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+}
+
+.result-block{
+    padding-top:30px;
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.label{
+    font-size:11px;
+    letter-spacing:3px;
+    color:#6b7280;
+}
+
+.value{
+    margin-top:20px;
+    font-size:26px;
+    font-weight:500;
+    letter-spacing:1.5px;
+}
+
+.bar-container{
+    margin-top:25px;
+    height:4px;
+    background:rgba(255,255,255,0.1);
+    border-radius:20px;
+}
+
+.bar{
+    height:100%;
+    width:0%;
+    background:white;
+    transition:1s ease;
+    border-radius:20px;
+}
+
+/* ── NEW: Score breakdown ── */
+.score-breakdown{
+    display:flex;
+    gap:30px;
+    margin-top:20px;
+}
+
+.score-pill{
+    flex:1;
+    padding:14px 18px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+.score-pill .pill-label{
+    font-size:10px;
+    letter-spacing:2.5px;
+    color:#6b7280;
+    margin-bottom:8px;
+}
+
+.score-pill .pill-bar-wrap{
+    height:3px;
+    background:rgba(255,255,255,0.08);
+    border-radius:10px;
+    margin-top:6px;
+}
+
+.score-pill .pill-bar{
+    height:100%;
+    width:0%;
+    border-radius:10px;
+    transition:1.2s ease;
+}
+
+.pill-bar.keyword{ background:rgba(255,255,255,0.6); }
+.pill-bar.yamnet { background:var(--cyan); box-shadow:0 0 8px rgba(0,255,255,0.5); }
+
+.score-pill .pill-val{
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:1px;
+}
+
+/* ── NEW: Audio events grid ── */
+.events-section{
+    grid-column: span 2;
+    padding-top:30px;
+    border-top:1px solid rgba(255,255,255,0.08);
+    display:none;
+}
+
+.events-section .label{ margin-bottom:20px; display:block; }
+
+.events-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(180px,1fr));
+    gap:12px;
+}
+
+.event-chip{
+    padding:12px 16px;
+    border-radius:12px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.07);
+    transition:0.3s ease;
+}
+
+.event-chip:hover{
+    background:rgba(0,255,255,0.06);
+    border-color:rgba(0,255,255,0.25);
+}
+
+.event-chip .chip-name{
+    font-size:13px;
+    letter-spacing:0.3px;
+    margin-bottom:8px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.event-chip .chip-bar-wrap{
+    height:3px;
+    background:rgba(255,255,255,0.07);
+    border-radius:10px;
+}
+
+.event-chip .chip-bar{
+    height:100%;
+    border-radius:10px;
+    background:linear-gradient(90deg,rgba(255,255,255,0.3),rgba(255,255,255,0.7));
+    transition:0.8s ease;
+}
+
+.event-chip .chip-score{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:5px;
+    letter-spacing:1px;
+}
+
+/* ── NEW: Matched threats ── */
+.threat-events-section{
+    grid-column: span 2;
+    padding-top:30px;
+    border-top:1px solid rgba(255,255,255,0.08);
+    display:none;
+}
+
+.threat-events-section .label{ margin-bottom:20px; display:block; }
+
+.threat-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.threat-row{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:14px 18px;
+    border-radius:14px;
+    background:rgba(255,0,60,0.06);
+    border:1px solid rgba(255,0,60,0.15);
+    transition:0.3s;
+}
+
+.threat-row:hover{
+    background:rgba(255,0,60,0.1);
+}
+
+.threat-row .tr-name{
+    flex:1;
+    font-size:14px;
+    letter-spacing:0.5px;
+}
+
+.threat-row .tr-conf{
+    font-size:12px;
+    color:#ff6b6b;
+    letter-spacing:1px;
+    white-space:nowrap;
+}
+
+.threat-row .tr-contrib{
+    font-size:12px;
+    color:var(--muted);
+    white-space:nowrap;
+}
+
+/* ── No threats badge ── */
+.no-threats-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 18px;
+    border-radius:30px;
+    background:rgba(0,255,100,0.07);
+    border:1px solid rgba(0,255,100,0.2);
+    color:#4ade80;
+    font-size:13px;
+    letter-spacing:1px;
+}
+
+/* ABOUT */
+.about{
+    padding:160px 20px;
+    text-align:center;
+    border-top:1px solid var(--border);
+    opacity:0;
+}
+
+.about h2{
+    font-family:'Playfair Display', serif;
+    font-size:50px;
+    margin-bottom:30px;
+}
+
+.about-intro{
+    max-width:700px;
+    margin:30px auto 80px;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.7;
+}
+
+.about-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:40px;
+    max-width:1100px;
+    margin:auto;
+}
+
+.about-card{
+    padding:40px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.04);
+    border:1px solid rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    transition:0.4s ease;
+}
+
+.about-card:hover{
+    transform:translateY(-10px);
+    background:rgba(255,255,255,0.06);
+}
+
+.about-card h3{
+    font-size:18px;
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+.about-card p{
+    color:var(--muted);
+    line-height:1.6;
+    font-size:15px;
+}
+
+@media(max-width:900px){
+    .about-grid{grid-template-columns:1fr;}
+}
+
+.loading-spinner{
+    width:18px;
+    height:18px;
+    border:3px solid rgba(255,255,255,0.2);
+    border-top:3px solid white;
+    border-radius:50%;
+    display:inline-block;
+    animation:spin 0.8s linear infinite;
+    margin-right:8px;
+    vertical-align:middle;
+}
+
+@keyframes spin{
+    from{transform:rotate(0deg);}
+    to{transform:rotate(360deg);}
+}
+
+/* ANALYSIS WAVE BACKGROUND */
+.analysis-wave{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    opacity:0;
+    z-index:0;
+}
+
+.analysis-wave::before,
+.analysis-wave::after{
+    content:"";
+    position:absolute;
+    width:200%;
+    height:200%;
+    left:-50%;
+    bottom:-100%;
+    background:radial-gradient(circle, rgba(0,255,255,0.25), transparent 70%);
+    animation:waveRise 4s cubic-bezier(0.22,1,0.36,1) infinite;
+}
+
+.analysis-wave::after{
+    animation-delay:3s;
+    opacity:0.5;
+}
+
+@keyframes waveRise{
+    0%{transform:translateY(0) scale(1);opacity:0.2;}
+    50%{opacity:0.6;}
+    100%{transform:translateY(-60%) scale(1.2);opacity:0;}
+}
+
+/* CUSTOM PLAYER */
+.custom-player{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:16px 20px;
+    border-radius:16px;
+    background:linear-gradient(145deg,#0a0a0a,#111);
+    box-shadow:0 10px 40px rgba(0,0,0,0.8),inset 0 0 10px rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+}
+
+#playPause{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    font-size:16px;
+    color:black;
+    background:white;
+    transition:0.3s;
+}
+
+#playPause:hover{transform:scale(1.1);}
+
+.progress-container{
+    flex:1;
+    height:6px;
+    background:rgba(255,255,255,0.1);
+    border-radius:20px;
+    cursor:pointer;
+    position:relative;
+}
+
+.progress{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00ffff,#00ffcc);
+    border-radius:20px;
+    box-shadow:0 0 10px rgba(0,255,255,0.6);
+}
+
+#currentTime,#duration{
+    font-size:12px;
+    color:#9ca3af;
+    min-width:40px;
+    text-align:center;
+}
+
+.soft-glow{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:radial-gradient(circle at center, rgba(0,255,255,0.08), transparent 60%);
+    opacity:0;
+    transition:0.6s;
+}
+/* YAMNET PANEL */
+.yamnet-panel{
+    margin-top:60px;
+    padding:40px;
+    border-radius:20px;
+    background:rgba(0,255,255,0.05);
+    border:1px solid rgba(0,255,255,0.2);
+}
+
+.yamnet-title{
+    font-size:22px;
+    letter-spacing:2px;
+    margin-bottom:30px;
+    color:#00ffff;
+}
+
+.yamnet-subtitle{
+    margin-top:25px;
+    margin-bottom:10px;
+    font-size:14px;
+    color:#9ca3af;
+    letter-spacing:2px;
+}
+
+.yamnet-events,
+.yamnet-threats{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.yamnet-chip{
+    padding:10px 14px;
+    border-radius:10px;
+    background:rgba(255,255,255,0.05);
+    font-size:13px;
+}
+
+.yamnet-chip.threat{
+    background:rgba(255,0,0,0.15);
+    border:1px solid rgba(255,0,0,0.3);
+}
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-logo">AllEars</div>
+    <div class="sidebar-menu">
+        <div class="menu-item active" data-section="dashboard">Dashboard</div>
+        <div class="menu-item" data-section="settings">Model Settings</div>
+        <div class="menu-item" data-section="reports">Saved Reports</div>
+        <div class="menu-item" data-section="profile">Profile</div>
+    </div>
+</div>
+
+<div class="main-content">
+
+<div class="nav">
+    <div class="logo">AllEars</div>
+    <div class="nav-right">
+        <div onclick="scrollToAbout()">About</div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="app-section" id="dashboardSection">
+
+    <div class="hero">
+        <h1 id="heroTitle">
+            <span class="hero-word">Listen</span><br>
+            <span class="hero-word">Think</span><br>
+            <span class="hero-word">Understand</span>
+        </h1>
+        <p id="heroSub">AI-powered speech recognition and advanced threat detection.</p>
+        <button class="btn-outline" onclick="scrollToAnalysis()">BEGIN ANALYSIS →</button>
+    </div>
+
+    <div class="panel" id="analysisPanel">
+        <div class="analysis-wave" id="analysisWave"></div>
+        <div class="soft-glow" id="panelGlow"></div>
+
+        <div class="controls">
+            <select id="modelSelect">
+                <option value="tiny">Tiny</option>
+                <option value="base" selected>Base</option>
+                <option value="small">Small</option>
+                <option value="medium">Medium</option>
+                <option value="large">Large</option>
+            </select>
+
+            <input type="file" id="fileInput" accept="audio/*">
+
+            <div class="recorder-wrapper">
+                <div id="recordBtn" class="shield-recorder">
+                    <div class="shield-glow"></div>
+                    <div class="mic-core">🎤</div>
+                    <div class="sound-waves">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+                <div id="recordTimer" class="rec-timer">00:00</div>
+            </div>
+        </div>
+
+        <div class="preview-panel" id="previewPanel">
+            <div class="custom-player" id="customPlayer">
+                <button id="playPause">▶</button>
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress" id="progress"></div>
+                </div>
+                <span id="currentTime">0:00</span>
+                <span id="duration">0:00</span>
+            </div>
+            <audio id="audioPlayer"></audio>
+            <button id="analyzeBtn">ANALYZE AUDIO →</button>
+        </div>
+
+        <!-- RESULTS GRID -->
+        <div class="results">
+
+            <!-- Language -->
+            <div class="result-block">
+                <div class="label">LANGUAGE</div>
+                <div class="value" id="language">---</div>
+            </div>
+
+            <!-- Combined threat -->
+            <div class="result-block">
+                <div class="label">THREAT LEVEL</div>
+                <div class="bar-container">
+                    <div class="bar" id="threatBar"></div>
+                </div>
+                <div class="value" id="threatText">No Threat</div>
+
+                <!-- Score breakdown: keyword vs YAMNet -->
+                <div class="score-breakdown" id="scoreBreakdown" style="display:none;">
+                    <div class="score-pill">
+                        <div class="pill-label">KEYWORD SCORE</div>
+                        <div class="pill-val" id="keywordScore">0</div>
+                        <div class="pill-bar-wrap">
+                            <div class="pill-bar keyword" id="keywordBar"></div>
+                        </div>
+                    </div>
+                    <div class="score-pill">
+                        <div class="pill-label">YAMNET SCORE</div>
+                        <div class="pill-val" id="yamnetScore">0</div>
+                        <div class="pill-bar-wrap">
+                            <div class="pill-bar yamnet" id="yamnetBar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transcription -->
+            <!-- Audio Explanation -->
+<div class="result-block" style="grid-column:span 2;">
+    <div class="label">AUDIO INTERPRETATION</div>
+    <div class="value" id="audioExplanation">---</div>
+</div>
+
+<!-- Transcription -->
+<div class="result-block" style="grid-column:span 2;">
+    <div class="label">TRANSCRIPTION</div>
+    <div class="value" id="text">---</div>
+</div>
+
+            <!-- Top audio events -->
+            <div class="events-section" id="eventsSection">
+                <span class="label">TOP AUDIO EVENTS — YAMNET</span>
+                <div class="events-grid" id="eventsGrid"></div>
+            </div>
+
+            <!-- Matched threat events -->
+            <div class="threat-events-section" id="threatEventsSection">
+                <span class="label">MATCHED THREAT SIGNALS</span>
+                <div id="threatEventsList"></div>
+            </div>
+
+        </div>
+        <!-- YAMNET SECTION -->
+<div class="yamnet-panel" id="yamnetPanel" style="display:none;">
+    <div class="yamnet-title">YAMNET AUDIO ANALYSIS</div>
+
+    <div class="yamnet-score-block">
+        <div class="label">YAMNET THREAT SCORE</div>
+        <div class="value" id="yamnetMainScore">0</div>
+    </div>
+
+    <div class="yamnet-subtitle">TOP DETECTED SOUNDS</div>
+    <div id="yamnetEvents" class="yamnet-events"></div>
+
+    <div class="yamnet-subtitle">DETECTED THREAT SIGNALS</div>
+    <div id="yamnetThreats" class="yamnet-threats"></div>
+</div>
+    </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="app-section" id="settingsSection" style="display:none;">
+    <div class="panel">
+        <h2 style="margin-bottom:40px;">Model Settings</h2>
+        <div style="display:flex;flex-direction:column;gap:30px;">
+            <div>
+                <label>Default Model</label><br><br>
+                <select>
+                    <option>Tiny</option>
+                    <option selected>Base</option>
+                    <option>Small</option>
+                    <option>Medium</option>
+                    <option>Large</option>
+                </select>
+            </div>
+            <div>
+                <label>Threat Sensitivity</label><br><br>
+                <input type="range" min="0" max="100" value="50">
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" checked>
+                    Enable Auto Threat Detection
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REPORTS -->
+<div class="app-section" id="reportsSection" style="display:none;">
+    <div class="panel">
+        <h2 style="margin-bottom:40px;">Saved Reports</h2>
+        <div id="reportsList">
+            <p style="color:var(--muted);">No reports saved yet.</p>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE -->
+<div class="app-section" id="profileSection" style="display:none;">
+    <div class="panel">
+        <h2 style="margin-bottom:40px;">Profile</h2>
+        <div style="display:flex;flex-direction:column;gap:20px;font-size:18px;">
+            <div><strong>Name:</strong> Harsh</div>
+            <div><strong>Email:</strong> harshsingh@gmail.com</div>
+            <div><strong>Role:</strong> TBD</div>
+        </div>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div class="about" id="aboutSection">
+    <h2>About AllEars</h2>
+    <p class="about-intro">
+        AllEars is an AI-powered speech intelligence system designed for modern monitoring,
+        digital investigations, and real-time threat detection.
+        It transforms raw audio into actionable intelligence within seconds.
+    </p>
+    <div class="about-grid">
+        <div class="about-card">
+            <h3>AI Transcription</h3>
+            <p>Powered by advanced speech models, AllEars delivers accurate
+            multi-language transcription with contextual understanding.</p>
+        </div>
+        <div class="about-card">
+            <h3>Threat Detection Engine</h3>
+            <p>Intelligent pattern recognition identifies potential risk signals
+            and assigns real-time threat scoring.</p>
+        </div>
+        <div class="about-card">
+            <h3>Secure & Scalable</h3>
+            <p>Built for enterprise-grade environments with secure processing
+            and scalable architecture.</p>
+        </div>
+    </div>
+</div>
+
+</div><!-- /main-content -->
+
+<script>
+gsap.registerPlugin(ScrollTrigger);
+
+gsap.to(".hero-word",{opacity:1,y:0,duration:1,stagger:0.3,delay:0.4});
+gsap.to("#heroSub",{opacity:1,y:-10,duration:1.2,delay:0.4});
+gsap.to(".btn-outline",{opacity:1,y:-10,duration:1,delay:0.8});
+
+gsap.to(".hero",{
+    scale:0.95,opacity:0.4,y:-100,ease:"none",
+    scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}
+});
+gsap.to(".about",{opacity:1,duration:1.2,scrollTrigger:{trigger:".about",start:"top 80%"}});
+
+function scrollToAbout(){ document.getElementById("aboutSection").scrollIntoView({behavior:"smooth"}); }
+function scrollToAnalysis(){ document.getElementById("analysisPanel").scrollIntoView({behavior:"smooth"}); }
+
+/* ─── RECORDER ─── */
+let mediaRecorder, audioChunks=[], recording=false, recordedBlob=null, timerInterval, secondsElapsed=0;
+
+const recordBtn   = document.getElementById("recordBtn");
+const recordTimer = document.getElementById("recordTimer");
+const previewPanel= document.getElementById("previewPanel");
+const audioPlayer = document.getElementById("audioPlayer");
+const analyzeBtn  = document.getElementById("analyzeBtn");
+const wave        = document.getElementById("analysisWave");
+
+function startTimer(){
+    secondsElapsed=0; recordTimer.textContent="00:00";
+    timerInterval=setInterval(()=>{
+        secondsElapsed++;
+        const m=Math.floor(secondsElapsed/60), s=secondsElapsed%60;
+        recordTimer.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+        recordTimer.style.opacity="1";
+    },1000);
+}
+function stopTimer(){ clearInterval(timerInterval); recordTimer.style.opacity="0"; }
+
+recordBtn.onclick=async()=>{
+    if(!recording){
+        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+        mediaRecorder=new MediaRecorder(stream);
+        mediaRecorder.start();
+        recording=true; audioChunks=[];
+        recordBtn.classList.add("recording");
+        startTimer();
+        mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    }else{
+        mediaRecorder.stop();
+        recording=false;
+        recordBtn.classList.remove("recording");
+        stopTimer();
+        mediaRecorder.onstop=()=>{
+            recordedBlob=new Blob(audioChunks,{type:"audio/wav"});
+            showPreview(recordedBlob);
+        };
+    }
+};
+
+document.getElementById("fileInput").addEventListener("change",function(){
+    recordedBlob=this.files[0];
+    showPreview(recordedBlob);
+});
+
+function showPreview(blob){
+    audio.src=URL.createObjectURL(blob);
+    playPause.textContent="▶";
+    previewPanel.style.display="block";
+    analyzeBtn.style.display="inline-block";
+    gsap.fromTo(previewPanel,{opacity:0,y:-20},{opacity:1,y:0,duration:0.6});
+}
+
+/* ─── ANALYZE ─── */
+analyzeBtn.onclick=async()=>{
+    wave.style.opacity="1";
+    analyzeBtn.innerHTML='<span class="loading-spinner"></span>Analyzing';
+    analyzeBtn.style.pointerEvents="none";
+
+    const formData=new FormData();
+    formData.append("audio",recordedBlob);
+    formData.append("model",document.getElementById("modelSelect").value);
+
+    const response=await fetch("/transcribe",{method:"POST",body:formData});
+    const data=await response.json();
+
+    /* ── Audio Explanation ── */
+if (data.audio_explanation) {
+    document.getElementById("audioExplanation").textContent = data.audio_explanation;
+    document.getElementById("audioExplanation").style.whiteSpace = "pre-line";
+} else {
+    document.getElementById("audioExplanation").textContent = "No interpretation available.";
+}
+    // YAMNET PANEL UPDATE
+const yamnetPanel = document.getElementById("yamnetPanel");
+const yamnetEvents = document.getElementById("yamnetEvents");
+const yamnetThreats = document.getElementById("yamnetThreats");
+const yamnetMainScore = document.getElementById("yamnetMainScore");
+
+yamnetPanel.style.display = "block";
+
+// Set score
+yamnetMainScore.textContent = Math.round(data.yamnet_threat_score || 0);
+
+// Top events
+yamnetEvents.innerHTML = "";
+if(data.top_audio_events){
+   data.top_audio_events
+    .filter(evt => evt.score > 0.1)   // only >10%
+    .forEach(evt => {
+        const chip = document.createElement("div");
+        chip.className = "yamnet-chip";
+        chip.textContent = `${evt.label} (${Math.round(evt.score*100)}%)`;
+        yamnetEvents.appendChild(chip);
+    });
+    if(yamnetEvents.innerHTML === ""){
+    yamnetEvents.innerHTML = "<div class='yamnet-chip'>No strong signals detected</div>";
+}
+}
+
+// Threat events
+yamnetThreats.innerHTML = "";
+if(data.matched_threat_events && data.matched_threat_events.length > 0){
+    data.matched_threat_events.forEach(t => {
+        const chip = document.createElement("div");
+        chip.className = "yamnet-chip threat";
+        chip.textContent = `${t.label} (+${t.contribution})`;
+        yamnetThreats.appendChild(chip);
+    });
+} else {
+    yamnetThreats.innerHTML = "<div class='yamnet-chip'>No threat signals detected</div>";
+}
+
+    /* ── Language ── */
+    const languageMap={en:"English",hi:"Hindi",fr:"French",de:"German",es:"Spanish",
+        it:"Italian",pt:"Portuguese",ja:"Japanese",ko:"Korean",zh:"Chinese",ru:"Russian",ar:"Arabic"};
+    document.getElementById("language").textContent=languageMap[data.language]||data.language;
+
+    /* ── Transcription ── */
+    document.getElementById("text").textContent=data.text||"---";
+
+    /* ── Combined threat ── */
+    document.getElementById("threatBar").style.width=data.threat_level+"%";
+    document.getElementById("threatText").textContent=data.threat_status;
+
+    // colour the bar by severity
+    const bar=document.getElementById("threatBar");
+    if(data.threat_level===0)       bar.style.background="rgba(255,255,255,0.4)";
+    else if(data.threat_level<40)   bar.style.background="#facc15";
+    else if(data.threat_level<70)   bar.style.background="#fb923c";
+    else                            bar.style.background="#ef4444";
+
+    /* ── Score breakdown pills ── */
+    if(data.keyword_threat_score!==undefined){
+        document.getElementById("scoreBreakdown").style.display="flex";
+        document.getElementById("keywordScore").textContent=Math.round(data.keyword_threat_score);
+        document.getElementById("yamnetScore").textContent=Math.round(data.yamnet_threat_score);
+        setTimeout(()=>{
+            document.getElementById("keywordBar").style.width=data.keyword_threat_score+"%";
+            document.getElementById("yamnetBar").style.width=data.yamnet_threat_score+"%";
+        },100);
+    }
+
+    /* ── Top audio events ── */
+    const eventsSection=document.getElementById("eventsSection");
+    const eventsGrid   =document.getElementById("eventsGrid");
+
+    if(data.top_audio_events && data.top_audio_events.length){
+        eventsSection.style.display="block";
+        eventsGrid.innerHTML="";
+       data.top_audio_events
+    .filter(evt => evt.score > 0.1) // only >10%
+    .forEach(evt=>{
+            const pct=Math.round(evt.score*100);
+            const chip=document.createElement("div");
+            chip.className="event-chip";
+            chip.innerHTML=`
+                <div class="chip-name" title="${evt.label}">${evt.label}</div>
+                <div class="chip-bar-wrap">
+                    <div class="chip-bar" style="width:0%" data-pct="${pct}"></div>
+                </div>
+                <div class="chip-score">${pct}%</div>`;
+            eventsGrid.appendChild(chip);
+        });
+        // animate bars after DOM insert
+        setTimeout(()=>{
+            eventsGrid.querySelectorAll(".chip-bar").forEach(b=>{
+                b.style.width=b.dataset.pct+"%";
+            });
+        },100);
+    } else {
+        eventsSection.style.display="none";
+    }
+
+    /* ── Matched threat events ── */
+    const threatEventsSection=document.getElementById("threatEventsSection");
+    const threatEventsList   =document.getElementById("threatEventsList");
+
+    if(data.matched_threat_events && data.matched_threat_events.length){
+        threatEventsSection.style.display="block";
+        threatEventsList.innerHTML="";
+        const list=document.createElement("div");
+        list.className="threat-list";
+
+        data.matched_threat_events.forEach(t=>{
+            const row=document.createElement("div");
+            row.className="threat-row";
+            row.innerHTML=`
+                <span class="tr-name">${t.label}</span>
+                <span class="tr-conf">Conf: ${Math.round(t.score*100)}%</span>
+                <span class="tr-contrib">+${t.contribution.toFixed(1)} pts</span>`;
+            list.appendChild(row);
+        });
+        threatEventsList.appendChild(list);
+    } else {
+        threatEventsSection.style.display="block";
+        threatEventsList.innerHTML=`<div class="no-threats-badge">✓ No threat signals detected in audio</div>`;
+    }
+
+    analyzeBtn.innerHTML="ANALYZE AUDIO →";
+    analyzeBtn.style.pointerEvents="auto";
+    wave.style.opacity="0";
+};
+
+/* ─── SIDEBAR ─── */
+const menuItems=document.querySelectorAll(".menu-item");
+const sections={
+    dashboard:document.getElementById("dashboardSection"),
+    settings: document.getElementById("settingsSection"),
+    reports:  document.getElementById("reportsSection"),
+    profile:  document.getElementById("profileSection")
+};
+
+menuItems.forEach(item=>{
+    item.addEventListener("click",()=>{
+        menuItems.forEach(i=>i.classList.remove("active"));
+        item.classList.add("active");
+        Object.values(sections).forEach(s=>s.style.display="none");
+        sections[item.dataset.section].style.display="block";
+        window.scrollTo({top:0,behavior:"smooth"});
+    });
+});
+
+/* ─── CUSTOM PLAYER ─── */
+const playPause         =document.getElementById("playPause");
+const progress          =document.getElementById("progress");
+const progressContainer =document.getElementById("progressContainer");
+const currentTimeEl     =document.getElementById("currentTime");
+const durationEl        =document.getElementById("duration");
+const audio             =document.getElementById("audioPlayer");
+
+playPause.onclick=()=>{
+    if(audio.paused){ audio.play(); playPause.textContent="❚❚"; }
+    else            { audio.pause();playPause.textContent="▶";  }
+};
+
+audio.addEventListener("timeupdate",()=>{
+    const pct=(audio.currentTime/audio.duration)*100;
+    progress.style.width=pct+"%";
+    currentTimeEl.textContent=formatTime(audio.currentTime);
+});
+
+audio.addEventListener("loadedmetadata",()=>{ durationEl.textContent=formatTime(audio.duration); });
+
+function formatTime(t){
+    const m=Math.floor(t/60),s=Math.floor(t%60);
+    return m+":"+String(s).padStart(2,"0");
+}
+
+progressContainer.onclick=(e)=>{
+    audio.currentTime=(e.offsetX/progressContainer.clientWidth)*audio.duration;
+};
+
+/* ─── PANEL GLOW ─── */
+const glow=document.getElementById("panelGlow");
+analysisPanel.onmousemove=()=>{ glow.style.opacity="1"; };
+analysisPanel.onmouseleave=()=>{ glow.style.opacity="0"; };
+</script>
+
+</body>
+</html>
