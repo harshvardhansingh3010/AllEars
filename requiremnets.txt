@@ -1,0 +1,5 @@
+flask
+torch
+tensorflow
+transformers
+whisper
