@@ -80,7 +80,7 @@ http://127.0.0.1:5000
 
 ## 📸 Demo
 
-<img width="1875" height="974" alt="image" src="https://github.com/user-attachments/assets/920ee306-c474-40c9-a193-89d16561a91d" />
+<img src="assets/demo.gif" width="800"/>
 
 
 ---
